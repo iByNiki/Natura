@@ -9,7 +9,7 @@ def parseRequest(text):
     try:
         if (len(lines) < 1):
             return None
-        if (lines[0].split(" ")[0] not in structures.Requests.list()): 
+        if (lines[0].split(" ")[0].upper() not in structures.RequestTypes.list()): 
             return None
         if (len(lines[0].split(" ")) < 3):
             return None
@@ -19,8 +19,8 @@ def parseRequest(text):
     req = {}
 
     splitZero = lines[0].split(" ")
-    req["type"] = splitZero[0]
-    req["dir"] = splitZero[1]
+    req["type"] = splitZero[0].upper()
+    req["dir"] = splitZero[1].lower()
     req["ver"] = splitZero[2].replace("\r", "")
 
     if (req["dir"][-1] == "/"):

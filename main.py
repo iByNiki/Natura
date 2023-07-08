@@ -1,16 +1,18 @@
 import socket
 import threading
 import sys
-import tcpserver
 import logger
-
-HOST = "0.0.0.0"
-PORT = int(sys.argv[1])
-WEBDIR = sys.argv[2]
-
+from tcpserver import TCPServer
+from cache import Cache
+from settings import Settings
 
 if (__name__ == "__main__"):
-    tcpserver.start(WEBDIR, HOST, PORT)
+    settings = Settings()
+    # settings.loadFromFile()
+    cache = Cache(settings)
+
+    tcpserver = TCPServer(settings, cache)
+    tcpserver.start()
     tcpserver.loop()
 
 # TODO: Idea - add a plugin system to intercept requests etc
