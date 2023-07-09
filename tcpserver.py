@@ -4,6 +4,7 @@ import logger
 import natparser
 import structures
 import os
+import ssl
 
 WEBDIR, HOST, PORT = None, None, None
 
@@ -43,17 +44,31 @@ class ClientThread(threading.Thread):
             logger.warning("Invalid req by " + self.ip + ":" + str(self.port))
     
 class TCPServer():
-    def __init__(self, settings, cache):
+    def __init__(self, settings, cache, cert=None, key=None):
         self.threads = []
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.settings = settings
         self.cache = cache
+        self.cert = cert
+        self.key = key
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        if (self.cert != None):
+            print("ssl enabled")
+            ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_SERVER)
+            ctx.load_cert_chain(certfile=self.cert, keyfile=self.key)
+            self.sock = ctx.wrap_socket(self.sock, server_side=True)
+            print("wrapped")
 
     def start(self):
         logger.info("Starting server...")
 
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.settings.get("host"), self.settings.get("port")))
+
+        if (self.cert == None):
+            self.sock.bind((self.settings.get("host"), self.settings.get("port")))
+        else:
+            self.sock.bind((self.settings.get("host"), self.settings.get("ssl_port")))
 
     def loop(self):
         logger.info("Listening in port " + str(self.settings.get("port")))
