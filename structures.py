@@ -13,6 +13,7 @@ class FileTypes(ExtendedEnum):
     html = ["html", "htm"]
     js = ["js"]
     css = ["css"]
+    ntr = ["ntr", "natura"]
 
 class RequestTypes(ExtendedEnum):
     GET = "GET"
@@ -33,7 +34,7 @@ class Response():
     def setData(self, data):
         self.data = data
     def getRaw(self):
-        raw = self.version + " " + self.type.value + "\n"
+        raw = self.version + " " + self.type.value + "\r\n"
 
         if ("Date" not in self.headers):
             now = datetime.now()
@@ -41,7 +42,7 @@ class Response():
             self.headers["Date"] = format_date_time(stamp)
 
         for headKey in self.headers:
-            raw += headKey + ": " + self.headers[headKey] + "\n"
+            raw += headKey + ": " + self.headers[headKey] + "\r\n"
         
         raw += "\n\n"
         raw += self.data

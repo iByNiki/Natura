@@ -8,6 +8,7 @@ from settings import Settings
 
 if (__name__ == "__main__"):
     settings = Settings()
+    settings.load()
     # settings.loadFromFile()
     cache = Cache(settings)
 
@@ -15,5 +16,6 @@ if (__name__ == "__main__"):
     tcpserver.start()
     tcpserver.loop()
 
+# TODO: ADD SUPPORT FOR FILE SENDING WTF
 # TODO: Idea - add a plugin system to intercept requests etc
 # TODO: Idea - make a sort of php but with python

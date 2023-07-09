@@ -1,16 +1,26 @@
+import yaml
+
+SETTINGS_FILE = "config.yml"
+
 class Settings():
     def __init__(self):
-        self.data = {
-            "host": "0.0.0.0",
-            "port": 80,
-            "webdir": "C:\\www",
-            "minify": True
-        }
+        pass
     
     def get(self, key):
         if (key in self.data):
             return self.data[key]
         else:
             return None
+        
+    def load(self, file=SETTINGS_FILE):
+        f = open(file, "r")
+
+        try:
+            self.data = yaml.safe_load(f)
+        except yaml.YAMLError as err:
+            print(err)
+            self.data = None
+
+        f.close()
     
 # TODO: Make it load from file
