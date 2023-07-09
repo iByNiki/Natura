@@ -54,11 +54,9 @@ class TCPServer():
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         if (self.cert != None):
-            print("ssl enabled")
             ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_SERVER)
             ctx.load_cert_chain(certfile=self.cert, keyfile=self.key)
             self.sock = ctx.wrap_socket(self.sock, server_side=True)
-            print("wrapped")
 
     def start(self):
         logger.info("Starting server...")

@@ -43,13 +43,13 @@ class Cache():
             
             # TODO: Check if path is in don't cache list, and check if cache enabled in settings
 
-            self.cached[path] = {
-                "data": data,
-                "exp": 100000,
-                "date": time.time()
-            }
-
             if (not isBytes):
                 data = data.encode()
+
+                self.cached[path] = {
+                    "data": data,
+                    "exp": 100000,
+                    "date": time.time()
+                }
 
             return data

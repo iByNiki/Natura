@@ -45,7 +45,11 @@ class Response():
             raw += (headKey + ": " + self.headers[headKey] + "\r\n").encode()
         
         raw += "\n\n".encode()
-        raw += self.data
+
+        if (type(self.data) != bytes):
+            raw += self.data.encode()
+        else:
+            raw += self.data
 
         return raw
         
