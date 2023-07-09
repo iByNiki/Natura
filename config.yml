@@ -3,7 +3,7 @@ host: 0.0.0.0
 port: 80
 ssl_port: 443
 webdir: C:\www
-enable_ssl: true
+enable_ssl: false
 
 # SSL Settings
 cert_path: server.pem 

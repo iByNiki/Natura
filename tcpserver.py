@@ -29,7 +29,7 @@ class ClientThread(threading.Thread):
                     fileData = self.cache.getFile(request["dir"])
                     response = structures.Response(structures.ResponseTypes.OK)
                     response.setData(fileData)
-                    self.socket.send(response.getEncoded())
+                    self.socket.send(response.getRaw())
                     self.socket.close()
                     
                 else:
@@ -71,7 +71,10 @@ class TCPServer():
             self.sock.bind((self.settings.get("host"), self.settings.get("ssl_port")))
 
     def loop(self):
-        logger.info("Listening in port " + str(self.settings.get("port")))
+        if (self.cert == None):
+            logger.info("Listening in port " + str(self.settings.get("port")))
+        else:
+            logger.info("Listening in port " + str(self.settings.get("ssl_port")))
 
         while (True):
             self.sock.listen(1)

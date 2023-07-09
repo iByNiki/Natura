@@ -28,13 +28,13 @@ class Response():
         self.type = type
         self.version = "HTTP/1.1"
         self.headers = {"Server": "natura"}
-        self.data = ""
+        self.data = b""
     def addHeader(self, key, value):
         self.headers[key] = value
     def setData(self, data):
         self.data = data
     def getRaw(self):
-        raw = self.version + " " + self.type.value + "\r\n"
+        raw = (self.version + " " + self.type.value + "\r\n").encode()
 
         if ("Date" not in self.headers):
             now = datetime.now()
@@ -42,13 +42,10 @@ class Response():
             self.headers["Date"] = format_date_time(stamp)
 
         for headKey in self.headers:
-            raw += headKey + ": " + self.headers[headKey] + "\r\n"
+            raw += (headKey + ": " + self.headers[headKey] + "\r\n").encode()
         
-        raw += "\n\n"
+        raw += "\n\n".encode()
         raw += self.data
 
         return raw
-    
-    def getEncoded(self):
-        return self.getRaw().encode()
         

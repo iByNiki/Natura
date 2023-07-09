@@ -13,9 +13,19 @@ class Cache():
             # TODO: Check if cache has expired
             return self.cached[path]["data"]
         else:
-            f = open(self.settings.get("webdir") + path, "r")
-            data = f.read()
-            f.close()
+
+            isBytes = False
+
+            try:
+                f = open(self.settings.get("webdir") + path, "r")
+                data = f.read()
+                f.close()
+            except UnicodeDecodeError:
+                f = open(self.settings.get("webdir") + path, "rb")
+                data = f.read()
+                f.close()
+
+                isBytes = True
 
             extension = path.split(".")[len(path.split(".")) - 1]
 
@@ -38,5 +48,8 @@ class Cache():
                 "exp": 100000,
                 "date": time.time()
             }
+
+            if (not isBytes):
+                data = data.encode()
 
             return data
