@@ -37,8 +37,6 @@ class Response():
     def getRaw(self):
         raw = (self.version + " " + self.type.value + "\r\n").encode()
 
-        print(self.type.value)
-
         if ("Date" not in self.headers):
             now = datetime.now()
             stamp = mktime(now.timetuple())
@@ -51,8 +49,6 @@ class Response():
         
         raw += "\n".encode()
         raw += self.data
-
-        print(raw)
 
         return raw
         
