@@ -40,16 +40,14 @@ class Response():
             now = datetime.now()
             stamp = mktime(now.timetuple())
             self.headers["Date"] = format_date_time(stamp)
+            #self.headers["Content-Type"] = "image/png"
+            #self.headers["Accept-Ranges"] = "bytes"
 
         for headKey in self.headers:
             raw += (headKey + ": " + self.headers[headKey] + "\r\n").encode()
         
-        raw += "\n\n".encode()
-
-        if (type(self.data) != bytes):
-            raw += self.data.encode()
-        else:
-            raw += self.data
+        raw += "\n".encode()
+        raw += self.data
 
         return raw
         

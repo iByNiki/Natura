@@ -8,6 +8,13 @@ class Cache():
     def __init__(self, settings):
         self.cached = {}
         self.settings = settings
+
+    def clear(self):
+        self.cached = {}
+
+    def delete(self, path):
+        self.cached.pop()
+
     def getFile(self, path):
         if (path in self.cached):
             # TODO: Check if cache has expired

@@ -32,6 +32,5 @@ if (__name__ == "__main__"):
         sslThread.start()
     
 
-# TODO: ADD SUPPORT FOR FILE SENDING WTF
 # TODO: Idea - add a plugin system to intercept requests etc
 # TODO: Idea - make a sort of php but with python
