@@ -28,14 +28,17 @@ class ClientThread(threading.Thread):
 
             if (not self.isSSL and self.settings.get("ssl_redirect") and self.settings.get("enable_ssl")):
                 response = structures.Response(structures.ResponseTypes.MOVED_PERMANENTLY)
-                response.addHeader("Location", self.settings.get("ssl_redirect_path").replace("$1", request["dir"]))
+                response.addHeader("Location", self.settings.get("ssl_redirect_path").replace("/$1", request["dir"]))
                 
                 self.socket.send(response.getRaw())
                 self.socket.close()
-                
+
                 return
 
             if (request["type"] == structures.RequestTypes.GET.value):
+
+                request = natparser.checkDir(request)
+
                 if (os.path.exists(self.settings.get("webdir") + request["dir"])):
                     fileData = self.cache.getFile(request["dir"])
                     response = structures.Response(structures.ResponseTypes.OK)

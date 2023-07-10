@@ -23,13 +23,16 @@ def parseRequest(text):
     req["dir"] = splitZero[1].lower()
     req["ver"] = splitZero[2].replace("\r", "")
 
-    if (req["dir"][-1] == "/"):
-        # TODO: Check if exists .html .htm .php ...
-        req["dir"] += "index.html"
-
     for line in lines[1:]:
         splt = line.split(": ")
         if (len(splt) == 2):
             req[splt[0]] = splt[1].replace("\r", "")
+    
+    return req
+
+def checkDir(req):
+    if (req["dir"][-1] == "/"):
+        # TODO: Check if exists .html .htm .php ...
+        req["dir"] += "index.html"
     
     return req
