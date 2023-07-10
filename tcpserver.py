@@ -23,6 +23,7 @@ class ClientThread(threading.Thread):
             rawreq = self.socket.recv(1024).decode()
         except:
             logger.warning("Invalid req (on read) by " + self.ip + ":" + str(self.port))
+            self.socket.close()
             return
 
         request = natparser.parseRequest(rawreq)
