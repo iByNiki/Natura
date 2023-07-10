@@ -9,13 +9,14 @@ import ssl
 WEBDIR, HOST, PORT = None, None, None
 
 class ClientThread(threading.Thread):
-    def __init__(self, settings, ip, port, socket, cache):
+    def __init__(self, settings, ip, port, socket, cache, isSSL):
         threading.Thread.__init__(self)
         self.ip = ip
         self.port = port
         self.socket = socket
         self.cache = cache
         self.settings = settings
+        self.isSSL = isSSL
 
         logger.info("New thread started for " + ip + ":" + str(port))
 
@@ -24,6 +25,16 @@ class ClientThread(threading.Thread):
         request = natparser.parseRequest(rawreq)
 
         if (request != None):
+
+            if (not self.isSSL and self.settings.get("ssl_redirect") and self.settings.get("enable_ssl")):
+                response = structures.Response(structures.ResponseTypes.MOVED_PERMANENTLY)
+                response.addHeader("Location", self.settings.get("ssl_redirect_path").replace("$1", request["dir"]))
+                
+                self.socket.send(response.getRaw())
+                self.socket.close()
+                
+                return
+
             if (request["type"] == structures.RequestTypes.GET.value):
                 if (os.path.exists(self.settings.get("webdir") + request["dir"])):
                     fileData = self.cache.getFile(request["dir"])
@@ -71,14 +82,16 @@ class TCPServer():
     def loop(self):
         if (self.cert == None):
             logger.info("Listening in port " + str(self.settings.get("port")))
+            isSSL = False
         else:
             logger.info("Listening in port " + str(self.settings.get("ssl_port")))
+            isSSL = True
 
         while (True):
             self.sock.listen(1)
             (clientsock, (ip, port)) = self.sock.accept()
 
-            clientThread = ClientThread(self.settings, ip, port, clientsock, self.cache)
+            clientThread = ClientThread(self.settings, ip, port, clientsock, self.cache, isSSL)
             clientThread.start()
 
             self.threads.append(clientThread)

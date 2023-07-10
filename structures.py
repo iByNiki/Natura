@@ -22,6 +22,7 @@ class RequestTypes(ExtendedEnum):
 class ResponseTypes(ExtendedEnum):
     OK = "200 OK"
     NOT_FOUND = "404 Not Found"
+    MOVED_PERMANENTLY = "Moved Permanently"
 
 class Response():
     def __init__(self, type):

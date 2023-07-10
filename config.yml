@@ -6,7 +6,9 @@ webdir: C:\www
 enable_ssl: false
 
 # SSL Settings
-cert_path: server.pem 
+ssl_redirect: true
+ssl_redirect_path: https://yourdomain.com/$1
+cert_path: server.pem
 key_path: key.pem
 
 # Advanced Settings
