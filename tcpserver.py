@@ -19,7 +19,11 @@ class ClientThread(threading.Thread):
         self.isSSL = isSSL
 
     def run(self):
-        rawreq = self.socket.recv(1024).decode()
+        try:
+            rawreq = self.socket.recv(1024).decode()
+        except:
+            logger.warning("Invalid req (on read) by " + self.ip + ":" + str(self.port))
+            
         request = natparser.parseRequest(rawreq)
 
         if (request != None):
