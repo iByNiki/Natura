@@ -18,19 +18,21 @@ class ClientThread(threading.Thread):
         self.settings = settings
         self.isSSL = isSSL
 
-        logger.info("New thread started for " + ip + ":" + str(port))
-
     def run(self):
         rawreq = self.socket.recv(1024).decode()
         request = natparser.parseRequest(rawreq)
 
         if (request != None):
 
+            # TODO: Check request has all necessary data
+
+            logger.info(self.ip + ":" + str(self.port) + " - " + request["type"] + " " + request["dir"])
+
             if (not self.isSSL and self.settings.get("ssl_redirect") and self.settings.get("enable_ssl")):
                 response = structures.Response(structures.ResponseTypes.MOVED_PERMANENTLY)
                 response.addHeader("Location", self.settings.get("ssl_redirect_path").replace("/$1", request["dir"]))
                 
-                self.socket.send(response.getRaw())
+                self.safeSend(response.getRaw())
                 self.socket.close()
 
                 return
@@ -43,12 +45,12 @@ class ClientThread(threading.Thread):
                     fileData = self.cache.getFile(request["dir"])
                     response = structures.Response(structures.ResponseTypes.OK)
                     response.setData(fileData)
-                    self.socket.send(response.getRaw())
+                    self.safeSend(response.getRaw())
                     self.socket.close()
                     
                 else:
                     # TODO: display 404
-                    logger.warning("404 by " + self.ip + ":" + str(self.port))
+                    logger.warning("404 by " + self.ip + ":" + str(self.port) + " in " + request["dir"])
                     pass
             else:
                 # TODO: invalid request 2 (or not supported)
@@ -56,6 +58,12 @@ class ClientThread(threading.Thread):
         else:
             # TODO: display invalid request
             logger.warning("Invalid req by " + self.ip + ":" + str(self.port))
+
+    def safeSend(self, data):
+        try:
+            self.socket.send(data)
+        except BrokenPipeError:
+            logger.warning("Connection closed by " + self.ip + ":" + str(self.port))
     
 class TCPServer():
     def __init__(self, settings, cache, cert=None, key=None):
@@ -92,7 +100,11 @@ class TCPServer():
 
         while (True):
             self.sock.listen(1)
-            (clientsock, (ip, port)) = self.sock.accept()
+
+            try:
+                (clientsock, (ip, port)) = self.sock.accept()
+            except ssl.SSLError:
+                pass
 
             clientThread = ClientThread(self.settings, ip, port, clientsock, self.cache, isSSL)
             clientThread.start()
