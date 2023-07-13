@@ -50,7 +50,7 @@ class Cache():
             
             # TODO: Check if path is in don't cache list, and check if cache enabled in settings
 
-            if (not isBytes):
+            if (not isBytes and self.settings.get("cache")):
                 data = data.encode()
 
                 self.cached[path] = {

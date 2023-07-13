@@ -12,5 +12,6 @@ cert_path: server.pem
 key_path: key.pem
 
 # Advanced Settings
+cache: true
 minify: true
 natura_lang: true
