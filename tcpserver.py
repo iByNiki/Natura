@@ -116,6 +116,3 @@ class TCPServer():
             clientThread.start()
 
             self.threads.append(clientThread)
-
-
-# TODO: Maybe move the main server onto another thread?
