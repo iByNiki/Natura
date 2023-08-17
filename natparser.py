@@ -34,5 +34,7 @@ def checkDir(req):
     if (req["dir"][-1] == "/"):
         # TODO: Check if exists .html .htm .php ...
         req["dir"] += "index.html"
+    if ("." not in req["dir"]): # TODO: Perhaps very scuffed?
+        req["dir"] += "/index.html"
     
     return req
